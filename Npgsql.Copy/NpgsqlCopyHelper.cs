@@ -9,7 +9,7 @@ namespace Npgsql.Copy
 {
     public class NpgsqlCopyHelper<T> where T : class
     {
-        private readonly string tableName;
+        private readonly string defaultTableName;
         private readonly string schema;
         private readonly List<MappingInfo> mappingList = new List<MappingInfo>();
         private readonly bool autoTransactions;
@@ -18,7 +18,7 @@ namespace Npgsql.Copy
         {
             var type = context.Model.FindEntityType(typeof(T));
             var r = type.Relational();
-            tableName = $"\"{r.TableName}\"";
+            defaultTableName = $"\"{r.TableName}\"";
             schema = r.Schema;
             var props = type.GetProperties();
             foreach (var prop in props)
@@ -30,11 +30,12 @@ namespace Npgsql.Copy
             this.autoTransactions = autoTransactions;
         }
 
-        public int Insert(NpgsqlConnection conn, IEnumerable<T> list, NpgsqlTransaction tran = null)
+        public int Insert(NpgsqlConnection conn, IEnumerable<T> list, NpgsqlTransaction tran = null, string otherTable = null)
         {
             if (list == null || !list.Any())
                 return 0;
             var mis = mappingList.Where(mi => !mi.IsDbGenerated).ToList();
+            var tableName = defaultTableName ?? otherTable;
             using (tran = GetTransaction(conn, tran))
             {
                 try
@@ -51,17 +52,18 @@ namespace Npgsql.Copy
             }
         }
 
-        public Task<int> InsertAsync(NpgsqlConnection conn, IEnumerable<T> list, NpgsqlTransaction tran = null)
+        public Task<int> InsertAsync(NpgsqlConnection conn, IEnumerable<T> list, NpgsqlTransaction tran = null, string otherTable = null)
         {
             if (list == null || !list.Any())
                 return Task.FromResult(0);
-            return Task.Run(() => Insert(conn, list, tran));
+            return Task.Run(() => Insert(conn, list, tran, otherTable));
         }
 
-        public int Update(NpgsqlConnection conn, IEnumerable<T> list, NpgsqlTransaction tran = null, IEnumerable<string> updateFields = null)
+        public int Update(NpgsqlConnection conn, IEnumerable<T> list, NpgsqlTransaction tran = null, IEnumerable<string> updateFields = null, string otherTable = null)
         {
             if (list == null || !list.Any())
                 return 0;
+            var tableName = defaultTableName ?? otherTable;
             var mappings = mappingList;
             if (updateFields != null && updateFields.Any())
             {
@@ -98,11 +100,11 @@ namespace Npgsql.Copy
             }
         }
 
-        public Task<int> UpdateAsync(NpgsqlConnection conn, IEnumerable<T> list, NpgsqlTransaction tran = null, IEnumerable<string> updateFields = null)
+        public Task<int> UpdateAsync(NpgsqlConnection conn, IEnumerable<T> list, NpgsqlTransaction tran = null, IEnumerable<string> updateFields = null, string otherTable = null)
         {
             if (list == null || !list.Any())
                 return Task.FromResult(0);
-            return Task.Run(() => Update(conn, list, tran, updateFields));
+            return Task.Run(() => Update(conn, list, tran, updateFields, otherTable));
         }
 
         private int CopyData(NpgsqlConnection conn, IEnumerable<T> list, List<MappingInfo> mis, string table)

@@ -49,6 +49,8 @@ namespace Npgsql.Copy
                 return "timestamp";
             if (type.StartsWith("time", StringComparison.OrdinalIgnoreCase))
                 return "time";
+            if (type.StartsWith("character", StringComparison.OrdinalIgnoreCase))
+                return "character";
             return type;
         }
     }
