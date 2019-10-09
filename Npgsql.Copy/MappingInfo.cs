@@ -27,7 +27,7 @@ namespace Npgsql.Copy
 
         public MappingInfo(IProperty prop)
         {
-            ColumnName = $"\"{prop.Relational().ColumnName}\"";
+            ColumnName = $"\"{prop.GetColumnName()}\"";
             ColumnType = GetColumnType(prop);
             IsDbGenerated = prop.ValueGenerated != ValueGenerated.Never;
             IsPrimaryKey = prop.IsPrimaryKey();
@@ -44,7 +44,7 @@ namespace Npgsql.Copy
 
         private string GetColumnType(IProperty property)
         {
-            var type = property.Relational().ColumnType;
+            var type = property.GetColumnType();
             if (type.StartsWith("timestamp", StringComparison.OrdinalIgnoreCase))
                 return "timestamp";
             if (type.StartsWith("time", StringComparison.OrdinalIgnoreCase))

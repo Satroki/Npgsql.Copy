@@ -17,9 +17,9 @@ namespace Npgsql.Copy
         public NpgsqlCopyHelper(DbContext context, bool autoTransactions = true)
         {
             var type = context.Model.FindEntityType(typeof(T));
-            var r = type.Relational();
-            defaultTableName = $"\"{r.TableName}\"";
-            schema = r.Schema;
+            var r = type.GetTableName();
+            defaultTableName = $"\"{r}\"";
+            schema = type.GetSchema();
             var props = type.GetProperties();
             foreach (var prop in props)
             {
