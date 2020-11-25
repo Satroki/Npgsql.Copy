@@ -25,9 +25,9 @@ namespace Npgsql.Copy
 
         }
 
-        public MappingInfo(IProperty prop)
+        public MappingInfo(IProperty prop, in StoreObjectIdentifier? objectIdentifier)
         {
-            ColumnName = $"\"{prop.GetColumnName()}\"";
+            ColumnName = $"\"{prop.GetColumnName(objectIdentifier.Value)}\"";
             ColumnType = GetColumnType(prop);
             IsDbGenerated = prop.ValueGenerated != ValueGenerated.Never;
             IsPrimaryKey = prop.IsPrimaryKey();
@@ -45,12 +45,12 @@ namespace Npgsql.Copy
         private string GetColumnType(IProperty property)
         {
             var type = property.GetColumnType();
-            if (type.StartsWith("timestamp", StringComparison.OrdinalIgnoreCase))
-                return "timestamp";
-            if (type.StartsWith("time", StringComparison.OrdinalIgnoreCase))
-                return "time";
-            if (type.StartsWith("character", StringComparison.OrdinalIgnoreCase))
-                return "character";
+            //if (type.StartsWith("timestamp", StringComparison.OrdinalIgnoreCase))
+            //    return "timestamp";
+            //if (type.StartsWith("time", StringComparison.OrdinalIgnoreCase))
+            //    return "time";
+            //if (type.StartsWith("character", StringComparison.OrdinalIgnoreCase))
+            //    return "character";
             return type;
         }
     }

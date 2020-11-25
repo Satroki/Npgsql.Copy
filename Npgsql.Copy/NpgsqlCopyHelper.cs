@@ -20,10 +20,11 @@ namespace Npgsql.Copy
             var r = type.GetTableName();
             defaultTableName = $"\"{r}\"";
             schema = type.GetSchema();
+            var objectIdentifier = StoreObjectIdentifier.Create(type, StoreObjectType.Table);
             var props = type.GetProperties();
             foreach (var prop in props)
             {
-                var mi = new MappingInfo(prop);
+                var mi = new MappingInfo(prop, objectIdentifier);
                 mappingList.Add(mi);
             }
 
