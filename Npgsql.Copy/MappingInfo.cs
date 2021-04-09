@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NpgsqlTypes;
-using Npgsql;
-using System.Reflection;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Npgsql.Copy
 {
