@@ -24,8 +24,10 @@ namespace Npgsql.Copy
         {
             ColumnName = $"\"{prop.GetColumnName(objectIdentifier.Value)}\"";
             ColumnType = GetColumnType(prop);
-            IsDbGenerated = prop.ValueGenerated != ValueGenerated.Never;
             IsPrimaryKey = prop.IsPrimaryKey();
+            IsDbGenerated = IsPrimaryKey
+                ? prop.ValueGenerated != ValueGenerated.Never
+                : prop.ValueGenerated != ValueGenerated.Never && prop.GetDefaultValue() is null;
             PropertyInfo = prop.PropertyInfo;
             PropertyName = prop.PropertyInfo.Name;
             IsEnumProperty = prop.ClrType.IsEnum;
