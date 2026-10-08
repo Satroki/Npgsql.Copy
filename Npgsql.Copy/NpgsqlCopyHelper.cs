@@ -45,10 +45,10 @@ namespace Npgsql.Copy
                     tran?.Commit();
                     return count;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     tran?.Rollback();
-                    throw e;
+                    throw;
                 }
             }
         }
@@ -93,10 +93,10 @@ namespace Npgsql.Copy
                     tran?.Commit();
                     return count;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     tran?.Rollback();
-                    throw e;
+                    throw;
                 }
             }
         }
